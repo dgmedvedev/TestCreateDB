@@ -1,6 +1,8 @@
 package com.demo.createdb;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 if (toastMessage != null) {
                     toastMessage.cancel();
                 }
-                toastMessage = Toast.makeText(MainActivity.this, "Позция номер: " + position, Toast.LENGTH_SHORT);
+                toastMessage = Toast.makeText(MainActivity.this, "Позиция номер: " + position, Toast.LENGTH_SHORT);
                 toastMessage.show();
             }
 
@@ -56,6 +58,25 @@ public class MainActivity extends AppCompatActivity {
                 toastMessage.show();
             }
         });
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView,
+                                          @NonNull RecyclerView.ViewHolder viewHolder,
+                                          @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        if (!employees.isEmpty()) {
+                            employees.remove(viewHolder.getAdapterPosition());
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+        itemTouchHelper.attachToRecyclerView(recyclerViewEmployeees);
     }
 
     @Override
