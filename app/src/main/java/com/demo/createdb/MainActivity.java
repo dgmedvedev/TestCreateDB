@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.demo.createdb.adapters.EmployeesAdapter;
@@ -19,20 +20,22 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Employee> employees = new ArrayList<>();
 
-    private TextView textViewTitle;
     private RecyclerView recyclerViewEmployeees;
     private Toast toastMessage;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textViewTitle = findViewById(R.id.textViewTitle);
         recyclerViewEmployeees = findViewById(R.id.recyclerViewEmployeees);
 
         employees.add(new Employee(1, "Employee1", "IT"));
         employees.add(new Employee(2, "Employee2", "FBI"));
         employees.add(new Employee(3, "Employee3", "УМП"));
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Employee.setCount(preferences.getInt("count", 0));
 
         EmployeesAdapter adapter = new EmployeesAdapter();
         adapter.setEmployees(employees);
@@ -56,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 toastMessage = Toast.makeText(MainActivity.this, "Длинная позиция номер: " + position, Toast.LENGTH_SHORT);
                 toastMessage.show();
+                int id = Employee.getCount();
+                String name = String.format("Employee%s", id);
+                Employee employee = new Employee(id, name, employees.get(position).getDepartment());
+                adapter.addEmployee(employee);
             }
         });
 
@@ -75,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                     }
+
+
                 });
         itemTouchHelper.attachToRecyclerView(recyclerViewEmployeees);
     }
@@ -82,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        toastMessage.cancel();
+        if (toastMessage != null) {
+            toastMessage.cancel();
+        }
+        preferences.edit().putInt("count", Employee.getCount()).apply();
     }
 }

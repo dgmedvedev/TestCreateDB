@@ -1,14 +1,17 @@
 package com.demo.createdb;
 
 public class Employee {
-    int id;
-    String name;
-    String department;
+    private int id;
+    private String name;
+    private String department;
+    private static int count;
+
 
     public Employee(int id, String name, String department) {
         this.id = id;
         this.name = name;
         this.department = department;
+        ++count;
     }
 
     public int getId() {
@@ -33,5 +36,13 @@ public class Employee {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public static int getCount() {
+        return count;
+    }
+
+    public static void setCount(int count) {
+        Employee.count = count;
     }
 }

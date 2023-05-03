@@ -61,8 +61,8 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Empl
                     onEmployeeClickListener.onEmployeeClick(getAdapterPosition());
                 }
             });
-            itemView.setOnLongClickListener(view->{
-                if(onEmployeeClickListener!=null){
+            itemView.setOnLongClickListener(view -> {
+                if (onEmployeeClickListener != null) {
                     onEmployeeClickListener.onLongClick(getAdapterPosition());
                 }
                 return true;
@@ -76,6 +76,11 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Empl
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public void addEmployee(Employee employee) {
+        this.employees.add(employee);
+        notifyDataSetChanged();
     }
 
     public void setOnEmployeeClickListener(OnEmployeeClickListener onEmployeeClickListener) {
