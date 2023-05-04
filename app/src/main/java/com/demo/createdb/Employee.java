@@ -1,14 +1,26 @@
 package com.demo.createdb;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "employees")
 public class Employee {
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String department;
     private static int count;
 
-
     public Employee(int id, String name, String department) {
         this.id = id;
+        this.name = name;
+        this.department = department;
+        ++count;
+    }
+
+    @Ignore
+    public Employee(String name, String department){
         this.name = name;
         this.department = department;
         ++count;
