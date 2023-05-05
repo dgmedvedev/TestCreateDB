@@ -1,4 +1,4 @@
-package com.demo.createdb;
+package com.demo.createdb.data;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -11,6 +11,9 @@ import java.util.List;
 public interface EmployeesDao {
     @Query("SELECT*FROM employees")
     List<Employee> getAllEmployees();
+
+    @Query("SELECT*FROM employees WHERE id == :employeeId")
+    Employee getEmployeeById(int employeeId);
 
     @Insert
     void insertEmployee(Employee employee);

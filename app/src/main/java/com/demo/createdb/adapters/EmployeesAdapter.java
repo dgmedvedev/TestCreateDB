@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.demo.createdb.Employee;
+import com.demo.createdb.data.Employee;
 import com.demo.createdb.R;
 
 import java.util.ArrayList;

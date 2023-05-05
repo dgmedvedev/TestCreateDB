@@ -4,6 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="8dp"
     tools:context=".DetailActivity">
 
+    <ImageView
+        android:id="@+id/imageViewPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/emoloyee_photo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/sym_def_app_icon"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textViewIdLabel"
+        style="@style/LabelStyle"
+        android:layout_marginTop="8dp"
+        android:text="@string/id_label"
+        app:layout_constraintStart_toEndOf="@+id/imageViewPhoto"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textViewCountLabel"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewCountLabel"
+        style="@style/LabelStyle"
+        android:text="@string/count_label"
+        app:layout_constraintStart_toEndOf="@+id/imageViewPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/textViewIdLabel" />
+
+    <TextView
+        android:id="@+id/textViewCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textViewCountLabel"
+        app:layout_constraintTop_toBottomOf="@+id/textViewId"/>
+
+    <TextView
+        android:id="@+id/textViewNameLabel"
+        style="@style/LabelStyle"
+        android:text="@string/name_label"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDepartmentLabel"
+        app:layout_constraintStart_toStartOf="@+id/imageViewPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPhoto" />
+
+    <TextView
+        android:id="@+id/textViewDepartmentLabel"
+        style="@style/LabelStyle"
+        android:text="@string/department_label"
+        app:layout_constraintStart_toStartOf="@+id/imageViewPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNameLabel" />
+
+    <TextView
+        android:id="@+id/textViewName"
+        style="@style/LabelStyle"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDepartmentLabel"
+        app:layout_constraintStart_toEndOf="@+id/textViewDepartmentLabel"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPhoto" />
+
+    <TextView
+        android:id="@+id/textViewDepartment"
+        style="@style/LabelStyle"
+        app:layout_constraintStart_toEndOf="@+id/textViewDepartmentLabel"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNameLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

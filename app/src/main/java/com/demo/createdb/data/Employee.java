@@ -1,4 +1,6 @@
-package com.demo.createdb;
+package com.demo.createdb.data;
+
+import android.util.Log;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -16,14 +18,13 @@ public class Employee {
         this.id = id;
         this.name = name;
         this.department = department;
-        ++count;
+        Log.i("COUNT++","COUNT++");
     }
 
     @Ignore
     public Employee(String name, String department) {
         this.name = name;
         this.department = department;
-        ++count;
     }
 
     public int getId() {

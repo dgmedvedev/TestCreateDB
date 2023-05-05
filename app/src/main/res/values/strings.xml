@@ -2,4 +2,12 @@
     <string name="app_name">CreateDB</string>
     <string name="title">Title</string>
     <string name="employee_photo">Employee photo</string>
+    <string name="name_label">Name:</string>
+    <string name="department_label">Department:</string>
+    <string name="emoloyee_photo">Emoloyee photo</string>
+    <string name="id_label">ID:</string>
+    <string name="count_label">Count:</string>
+    <string name="name_edit">Name</string>
+    <string name="department_edit">Department</string>
+    <string name="button_save">Save</string>
 </resources>

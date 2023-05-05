@@ -6,12 +6,16 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.demo.createdb.adapters.EmployeesAdapter;
+import com.demo.createdb.data.Employee;
+import com.demo.createdb.data.EmployeeDatabase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +28,18 @@ public class MainActivity extends AppCompatActivity {
     private Toast toastMessage;
     SharedPreferences preferences;
 
+    private EmployeeDatabase database;
+
+    private FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerViewEmployeees = findViewById(R.id.recyclerViewEmployeees);
+        database = EmployeeDatabase.getInstance(this);
 
-        employees.add(new Employee(1, "Employee1", "IT"));
-        employees.add(new Employee(2, "Employee2", "FBI"));
-        employees.add(new Employee(3, "Employee3", "УМП"));
+        recyclerViewEmployeees = findViewById(R.id.recyclerViewEmployeees);
+        fab = findViewById(R.id.fab);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Employee.setCount(preferences.getInt("count", 0));
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewEmployeees.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmployeees.setAdapter(adapter);
 
+        getData();
+
         adapter.setOnEmployeeClickListener(new EmployeesAdapter.OnEmployeeClickListener() {
             @Override
             public void onEmployeeClick(int position) {
@@ -50,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 toastMessage = Toast.makeText(MainActivity.this, "Позиция номер: " + position, Toast.LENGTH_SHORT);
                 toastMessage.show();
+
+                Employee employee = adapter.getEmployees().get(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("id", employee.getId());
+                startActivity(intent);
             }
 
             @Override
@@ -61,9 +75,17 @@ public class MainActivity extends AppCompatActivity {
                 toastMessage.show();
                 int id = Employee.getCount();
                 String name = String.format("Employee%s", id);
-                Employee employee = new Employee(id, name, employees.get(position).getDepartment());
+                Employee employee = new Employee(name, employees.get(position).getDepartment());
+                preferences.edit().putInt("count", ++id).apply();
+                Employee.setCount(id);
                 adapter.addEmployee(employee);
+                database.employeesDao().insertEmployee(employee);
             }
+        });
+
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, EditActivity.class);
+            startActivity(intent);
         });
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
@@ -78,8 +100,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         if (!employees.isEmpty()) {
-                            employees.remove(viewHolder.getAdapterPosition());
+                            Employee employee = employees.get(viewHolder.getAdapterPosition());
+                            employees.remove(employee);
                             adapter.notifyDataSetChanged();
+                            database.employeesDao().deleteEmployee(employee);
                         }
                     }
                 });
@@ -92,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
         if (toastMessage != null) {
             toastMessage.cancel();
         }
-        preferences.edit().putInt("count", Employee.getCount()).apply();
+    }
+
+    private void getData() {
+        List<Employee> employeesFromDB = database.employeesDao().getAllEmployees();
+        employees.clear();
+        employees.addAll(employeesFromDB);
     }
 }
