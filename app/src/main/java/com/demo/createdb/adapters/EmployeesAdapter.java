@@ -78,6 +78,11 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Empl
         this.employees = employees;
     }
 
+    public void removeEmployee(Employee employee) {
+        this.employees.remove(employee);
+        notifyDataSetChanged();
+    }
+
     public void addEmployee(Employee employee) {
         this.employees.add(employee);
         notifyDataSetChanged();

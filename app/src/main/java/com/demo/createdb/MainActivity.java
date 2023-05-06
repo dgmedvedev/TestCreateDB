@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewEmployeees;
     private Toast toastMessage;
     SharedPreferences preferences;
+    EmployeesAdapter adapter;
 
     private EmployeeDatabase database;
 
@@ -44,12 +45,13 @@ public class MainActivity extends AppCompatActivity {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Employee.setCount(preferences.getInt("count", 0));
 
-        EmployeesAdapter adapter = new EmployeesAdapter();
+        adapter = new EmployeesAdapter();
+        getData();
+
         adapter.setEmployees(employees);
         recyclerViewEmployeees.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmployeees.setAdapter(adapter);
 
-        getData();
 
         adapter.setOnEmployeeClickListener(new EmployeesAdapter.OnEmployeeClickListener() {
             @Override
@@ -68,18 +70,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(int position) {
-                if (toastMessage != null) {
-                    toastMessage.cancel();
-                }
-                toastMessage = Toast.makeText(MainActivity.this, "Длинная позиция номер: " + position, Toast.LENGTH_SHORT);
-                toastMessage.show();
-                int id = Employee.getCount();
-                String name = String.format("Employee%s", id);
-                Employee employee = new Employee(name, employees.get(position).getDepartment());
-                preferences.edit().putInt("count", ++id).apply();
-                Employee.setCount(id);
-                adapter.addEmployee(employee);
-                database.employeesDao().insertEmployee(employee);
+//                if (toastMessage != null) {
+//                    toastMessage.cancel();
+//                }
+//                toastMessage = Toast.makeText(MainActivity.this, "Длинная позиция номер: " + position, Toast.LENGTH_SHORT);
+//                toastMessage.show();
+//                int id = Employee.getCount();
+//                String name = String.format("Employee%s", id);
+//                Employee employee = new Employee(name, employees.get(position).getDepartment());
+//                preferences.edit().putInt("count", ++id).apply();
+//                Employee.setCount(id);
+//                adapter.addEmployee(employee);
+//                database.employeesDao().insertEmployee(employee);
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         if (!employees.isEmpty()) {
                             Employee employee = employees.get(viewHolder.getAdapterPosition());
                             employees.remove(employee);
-                            adapter.notifyDataSetChanged();
+                            adapter.removeEmployee(employee);
                             database.employeesDao().deleteEmployee(employee);
                         }
                     }
@@ -116,6 +120,12 @@ public class MainActivity extends AppCompatActivity {
         if (toastMessage != null) {
             toastMessage.cancel();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData();
     }
 
     private void getData() {

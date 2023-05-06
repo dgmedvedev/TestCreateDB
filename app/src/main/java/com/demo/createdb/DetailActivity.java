@@ -37,7 +37,6 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             finish();
         }
-
         getContent();
     }
 

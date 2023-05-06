@@ -3,7 +3,9 @@ package com.demo.createdb;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,12 +19,14 @@ public class EditActivity extends AppCompatActivity {
     private EditText editTextDepartment;
     private Toast toastMessage;
 
+    private SharedPreferences preferences;
     private EmployeeDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
         database = EmployeeDatabase.getInstance(this);
 
         editTextName = findViewById(R.id.editTextName);
@@ -32,17 +36,22 @@ public class EditActivity extends AppCompatActivity {
         buttonSave.setOnClickListener(view -> {
             String name = editTextName.getText().toString();
             String department = editTextDepartment.getText().toString();
-            if (!name.isEmpty() && !department.isEmpty()) {
+            if (!department.isEmpty()) {
+                if (name.isEmpty()) {
+                    name = String.format("Employee%s", Employee.getCount());
+                }
                 Employee employee = new Employee(name, department);
                 Employee.setCount(Employee.getCount() + 1);
+                preferences.edit().putInt("count", Employee.getCount()).apply();
                 database.employeesDao().insertEmployee(employee);
                 Intent intent = new Intent(EditActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 if (toastMessage != null) {
                     toastMessage.cancel();
                 }
-                toastMessage = Toast.makeText(this, "Все поля должны быть заполнены", Toast.LENGTH_SHORT);
+                toastMessage = Toast.makeText(this, "Поле department должно быть заполнено", Toast.LENGTH_SHORT);
                 toastMessage.show();
             }
         });
