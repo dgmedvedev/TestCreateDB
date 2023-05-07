@@ -2,6 +2,8 @@ package com.demo.createdb;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,12 +48,11 @@ public class MainActivity extends AppCompatActivity {
         Employee.setCount(preferences.getInt("count", 0));
 
         adapter = new EmployeesAdapter();
-        getData();
-
         adapter.setEmployees(employees);
         recyclerViewEmployeees.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmployeees.setAdapter(adapter);
 
+        getData();
 
         adapter.setOnEmployeeClickListener(new EmployeesAdapter.OnEmployeeClickListener() {
             @Override
@@ -70,18 +71,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(int position) {
-//                if (toastMessage != null) {
-//                    toastMessage.cancel();
-//                }
-//                toastMessage = Toast.makeText(MainActivity.this, "Длинная позиция номер: " + position, Toast.LENGTH_SHORT);
-//                toastMessage.show();
-//                int id = Employee.getCount();
-//                String name = String.format("Employee%s", id);
-//                Employee employee = new Employee(name, employees.get(position).getDepartment());
-//                preferences.edit().putInt("count", ++id).apply();
-//                Employee.setCount(id);
-//                adapter.addEmployee(employee);
-//                database.employeesDao().insertEmployee(employee);
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
                 startActivity(intent);
             }
@@ -105,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         if (!employees.isEmpty()) {
                             Employee employee = employees.get(viewHolder.getAdapterPosition());
-                            employees.remove(employee);
-                            adapter.removeEmployee(employee);
                             database.employeesDao().deleteEmployee(employee);
                         }
                     }
@@ -122,15 +109,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getData();
-    }
-
     private void getData() {
-        List<Employee> employeesFromDB = database.employeesDao().getAllEmployees();
-        employees.clear();
-        employees.addAll(employeesFromDB);
+        LiveData<List<Employee>> employeesFromDB = database.employeesDao().getAllEmployees();
+        employeesFromDB.observe(this, new Observer<List<Employee>>() {
+            @Override
+            public void onChanged(List<Employee> employeesFromLiveData) {
+                employees.clear();
+                employees.addAll(employeesFromLiveData);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }

@@ -1,7 +1,5 @@
 package com.demo.createdb.data;
 
-import android.util.Log;
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -18,7 +16,6 @@ public class Employee {
         this.id = id;
         this.name = name;
         this.department = department;
-        Log.i("COUNT++","COUNT++");
     }
 
     @Ignore
