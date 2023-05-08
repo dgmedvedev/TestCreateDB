@@ -3,7 +3,7 @@ package com.demo.createdb;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,22 +16,19 @@ import android.widget.Toast;
 
 import com.demo.createdb.adapters.EmployeesAdapter;
 import com.demo.createdb.data.Employee;
-import com.demo.createdb.data.EmployeeDatabase;
+import com.demo.createdb.data.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<Employee> employees = new ArrayList<>();
-
     private RecyclerView recyclerViewEmployeees;
     private Toast toastMessage;
-    SharedPreferences preferences;
-    EmployeesAdapter adapter;
+    private SharedPreferences preferences;
+    private EmployeesAdapter adapter;
 
-    private EmployeeDatabase database;
+    private MainViewModel viewModel;
 
     private FloatingActionButton fab;
 
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        database = EmployeeDatabase.getInstance(this);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         recyclerViewEmployeees = findViewById(R.id.recyclerViewEmployeees);
         fab = findViewById(R.id.fab);
@@ -48,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         Employee.setCount(preferences.getInt("count", 0));
 
         adapter = new EmployeesAdapter();
-        adapter.setEmployees(employees);
         recyclerViewEmployeees.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmployeees.setAdapter(adapter);
 
@@ -92,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        List<Employee> employees = adapter.getEmployees();
                         if (!employees.isEmpty()) {
                             Employee employee = employees.get(viewHolder.getAdapterPosition());
-                            database.employeesDao().deleteEmployee(employee);
+                            viewModel.deleteEmployee(employee);
                         }
                     }
                 });
@@ -110,14 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        LiveData<List<Employee>> employeesFromDB = database.employeesDao().getAllEmployees();
-        employeesFromDB.observe(this, new Observer<List<Employee>>() {
-            @Override
-            public void onChanged(List<Employee> employeesFromLiveData) {
-                employees.clear();
-                employees.addAll(employeesFromLiveData);
-                adapter.notifyDataSetChanged();
-            }
-        });
+        LiveData<List<Employee>> employeesFromDB = viewModel.getEmployees();
+        employeesFromDB.observe(this, employeesFromLiveData -> adapter.setEmployees(employeesFromLiveData));
     }
 }

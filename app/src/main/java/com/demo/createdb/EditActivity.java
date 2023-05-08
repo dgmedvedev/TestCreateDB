@@ -1,6 +1,7 @@
 package com.demo.createdb;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.demo.createdb.data.Employee;
 import com.demo.createdb.data.EmployeeDatabase;
+import com.demo.createdb.data.MainViewModel;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -20,14 +22,14 @@ public class EditActivity extends AppCompatActivity {
     private Toast toastMessage;
 
     private SharedPreferences preferences;
-    private EmployeeDatabase database;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        database = EmployeeDatabase.getInstance(this);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         editTextName = findViewById(R.id.editTextName);
         editTextDepartment = findViewById(R.id.editTextDepartment);
@@ -43,7 +45,7 @@ public class EditActivity extends AppCompatActivity {
                 Employee employee = new Employee(name, department);
                 Employee.setCount(Employee.getCount() + 1);
                 preferences.edit().putInt("count", Employee.getCount()).apply();
-                database.employeesDao().insertEmployee(employee);
+                viewModel.insertEmployee(employee);
                 Intent intent = new Intent(EditActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
