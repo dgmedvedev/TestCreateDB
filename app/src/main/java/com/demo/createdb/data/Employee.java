@@ -44,10 +44,6 @@ public class Employee {
         return department;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
     public static int getCount() {
         return count;
     }

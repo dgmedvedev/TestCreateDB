@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 public class MainViewModel extends AndroidViewModel {
     private EmployeeDatabase database;
     private LiveData<List<Employee>> employees;
+    Employee employee;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -26,26 +27,24 @@ public class MainViewModel extends AndroidViewModel {
 
     public void insertEmployee(Employee employee) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            database.employeesDao().insertEmployee(employee);
-        });
+        executorService.execute(() -> database.employeesDao().insertEmployee(employee));
     }
 
     public void deleteEmployee(Employee employee) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            database.employeesDao().deleteEmployee(employee);
-        });
-    }
-
-    public void deleteAllEmployees(Employee employee) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            database.employeesDao().deleteAllEmployees();
-        });
+        executorService.execute(() -> database.employeesDao().deleteEmployee(employee));
     }
 
     public Employee getEmployeeById(int employeeId) {
-        return null;
+        Thread thread = new Thread(() -> {
+            employee = database.employeesDao().getEmployeeById(employeeId);
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return employee;
     }
 }

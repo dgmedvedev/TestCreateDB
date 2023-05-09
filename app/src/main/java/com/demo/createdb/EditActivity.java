@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.demo.createdb.data.Employee;
-import com.demo.createdb.data.EmployeeDatabase;
 import com.demo.createdb.data.MainViewModel;
 
 public class EditActivity extends AppCompatActivity {
@@ -39,11 +38,12 @@ public class EditActivity extends AppCompatActivity {
             String name = editTextName.getText().toString();
             String department = editTextDepartment.getText().toString();
             if (!department.isEmpty()) {
+                int count = Employee.getCount();
                 if (name.isEmpty()) {
-                    name = String.format("Employee%s", Employee.getCount());
+                    name = String.format("Employee%s", count);
                 }
                 Employee employee = new Employee(name, department);
-                Employee.setCount(Employee.getCount() + 1);
+                Employee.setCount(++count);
                 preferences.edit().putInt("count", Employee.getCount()).apply();
                 viewModel.insertEmployee(employee);
                 Intent intent = new Intent(EditActivity.this, MainActivity.class);

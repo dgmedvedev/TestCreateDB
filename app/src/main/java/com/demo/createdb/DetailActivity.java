@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.demo.createdb.data.Employee;
-import com.demo.createdb.data.EmployeeDatabase;
+import com.demo.createdb.data.MainViewModel;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -16,7 +16,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView textViewName;
     private TextView textViewDepartment;
 
-    private EmployeeDatabase database;
+    private MainViewModel viewModel;
 
     int id;
 
@@ -24,7 +24,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        database = EmployeeDatabase.getInstance(this);
+        viewModel = new MainViewModel(getApplication());
 
         textViewId = findViewById(R.id.textViewId);
         textViewCount = findViewById(R.id.textViewCount);
@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void getContent() {
-        Employee employee = database.employeesDao().getEmployeeById(id);
+        Employee employee = viewModel.getEmployeeById(id);
         if (employee != null) {
             textViewId.setText(Integer.toString(employee.getId()));
             textViewCount.setText(Integer.toString(Employee.getCount()));

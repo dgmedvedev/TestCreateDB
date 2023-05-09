@@ -16,7 +16,7 @@ public abstract class EmployeeDatabase extends RoomDatabase {
         synchronized (LOCK) {
             if (database == null) {
                 database = Room.databaseBuilder(context, EmployeeDatabase.class, DB_NAME)
-                        .allowMainThreadQueries() // ИСКЛЮЧИТЕЛЬНО для тестирования БД
+                        //.allowMainThreadQueries() // ИСКЛЮЧИТЕЛЬНО для тестирования БД
                         .fallbackToDestructiveMigration()
                         .build();
             }

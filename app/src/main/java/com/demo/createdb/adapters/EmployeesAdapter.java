@@ -79,16 +79,6 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Empl
         notifyDataSetChanged();
     }
 
-    public void removeEmployee(Employee employee) {
-        this.employees.remove(employee);
-        notifyDataSetChanged();
-    }
-
-    public void addEmployee(Employee employee) {
-        this.employees.add(employee);
-        notifyDataSetChanged();
-    }
-
     public void setOnEmployeeClickListener(OnEmployeeClickListener onEmployeeClickListener) {
         this.onEmployeeClickListener = onEmployeeClickListener;
     }
